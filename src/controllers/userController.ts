@@ -38,6 +38,27 @@ export const createUser = async(req: Request, res: Response) => {
     }
 };
 
+//Update existing user
+export const updateUser = async(req: Request, res: Response) => {
+    try{ 
+        const user = await User.findOneAndUpdate(
+            {_id: req.params.userId},
+            {$set: req.body},
+            {runValidators: true, new: true},
+        );
+
+        if(!user){
+            return res.status(404).json({message: 'No user with that id found!'});
+        }
+
+        res.json({message: 'Application successfully deleted!'});
+        return;
+    } catch(err: any){
+        res.status(500).json(err);
+        return;
+    }
+}
+
 //Delete a user and all associated data
 export const deleteUser = async(req: Request, res: Response) => {
     try {
