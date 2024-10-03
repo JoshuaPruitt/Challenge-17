@@ -1,4 +1,4 @@
-import { Thought, User } from "../models";
+import { Thought, User } from "../models/index.js";
 import { application, Request, Response } from "express";
 
 //Get all thoughts

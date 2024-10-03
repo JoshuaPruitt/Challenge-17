@@ -1,5 +1,6 @@
 import express from 'express';
 import db from './config/connection.js'
+import routes from './routes/index.js';
 
 const cwd = process.cwd();
 
@@ -12,8 +13,7 @@ const activity = cwd.includes('01-Activities')
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-// uncomment when routes exist
-//app.use(routes);
+app.use(routes);
 
 db.once('open', () => {
     app.listen(PORT, () => {
