@@ -1,5 +1,5 @@
 import { Thought, User } from "../models/index.js";
-import { application, Request, Response } from "express";
+import { Request, Response } from "express";
 
 //Get all thoughts
 export const getThoughts = async (_req: Request, res: Response) => {
@@ -20,7 +20,7 @@ export const getSingleThought = async (req: Request, res: Response) => {
             return res.status(404).json({message: 'No thought with that Id found!'});
         }
 
-        res.json(application);
+        res.json(thought);
         return;
     } catch(err: any){
         res.status(500).json(err);
@@ -110,7 +110,17 @@ export const addReaction = async (req: Request, res: Response) => {
         );
 
         if(!thought){
-            return res.status(404).json({message: 'No thought with this id!'});
+            return res.status(404).json({message: 'No thought with this id exists!'});
+        }
+
+        const user = await User.findOneAndUpdate(
+            {username: req.body.username},
+            {$addToSet: {reactions: req.body}},
+            {runValidators: true, new: true},
+        );
+
+        if(!user){
+            return res.status(404).json({message: 'No user with this username exists!'});
         }
 
         res.json(thought);

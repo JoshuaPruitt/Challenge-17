@@ -1,10 +1,12 @@
 import { Schema, model, Document, ObjectId } from 'mongoose';
+import Reaction from './Reaction.js';
 
 interface IUser extends Document {
     username: string;
     email: string;
     thoughts: ObjectId[];
     friends: ObjectId[];
+    reactions: typeof Reaction[];
 }
 
 const userSchema = new Schema<IUser>(
@@ -43,6 +45,8 @@ const userSchema = new Schema<IUser>(
                 ref: 'User',
             },
         ],
+
+        reactions: [Reaction],
     },
 
     {
@@ -60,6 +64,12 @@ userSchema
         return this.friends.length;
     });
 
+userSchema
+    .virtual('reactionCount')
+    .get(function(){
+        return this.reactions.length;
+    });
+    
 const User = model('user', userSchema)
 
 export default User;
