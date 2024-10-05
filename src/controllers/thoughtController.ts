@@ -33,7 +33,7 @@ export const createThought = async (req: Request, res: Response) => {
     try {
         const thought = await Thought.create(req.body);
         const user = await Thought.findOneAndUpdate(
-            {_id: req.body.userId},
+            {username: req.body.username},
             {$addToSet: {thoughts: thought._id}},
             {new: true},
         );
