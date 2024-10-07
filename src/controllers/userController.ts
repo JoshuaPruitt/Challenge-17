@@ -1,5 +1,5 @@
 import {User, Thought} from '../models/index.js'
-import {Request, Response} from 'express';
+import { Request, Response} from 'express';
 
 //Get all the users
 export const getUsers = async (_req: Request, res: Response) => {
@@ -62,6 +62,27 @@ export const updateUser = async(req: Request, res: Response) => {
 //Delete a user and all associated data
 export const deleteUser = async(req: Request, res: Response) => {
     try {
+        // //find all friends within the about to be deleted user
+        // const userF = await User.findOne({_id: req.params.userId});
+        // console.log("UserF Friends:", userF?.friends)
+
+        // if(!userF){
+        //     return res.status(404).json({message: 'No user with that id can be found!'});
+        // }
+
+        // //iterate over the friends and remove the userId from each friend.
+        // for(let i = 0; i < userF.friends.length; i++){
+        //     console.log("UserF Friend Index:", userF.friends[i])
+        //     const friend = User.findOneAndUpdate(
+        //         {_id: userF.friends[i]},
+        //         {$pull: {friends: req.params.userId}},
+        //         {new: true}
+        //     )
+
+        //     if(!friend){
+        //         return res.status(404).json({message: 'No users with this id exists! Friend not Removed.'});
+        //     }
+        // }
         const user = await User.findOneAndDelete({_id: req.params.userId});
         
         if(!user){
@@ -79,7 +100,6 @@ export const deleteUser = async(req: Request, res: Response) => {
 
 export const addFriend = async(req: Request, res: Response) => {
     try {
-        // const friends = []
         //update user
         const user = await User.findOneAndUpdate(
             {_id: req.params.userId},

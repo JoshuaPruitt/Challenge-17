@@ -32,17 +32,22 @@ export const getSingleThought = async (req: Request, res: Response) => {
 export const createThought = async (req: Request, res: Response) => {
     try {
         const thought = await Thought.create(req.body);
-        const user = await Thought.findOneAndUpdate(
+
+        if(!thought){
+            return res.status(404).json({message: 'Thought unable to be created!'});
+        }
+
+        const user = await User.findOneAndUpdate(
             {username: req.body.username},
             {$addToSet: {thoughts: thought._id}},
-            {new: true},
+            {runValidators: true, new: true},
         );
 
         if(!user){
-            return res.status(404).json({message: 'Thought created, but found no user with that id!'});
+            return res.status(404).json({message: 'Thought unable to be added to user!'});
         }
 
-        res.json('Created the Thought Sucessfully!');
+        res.json(thought);
         return;
     } catch(err: any){
         console.log(err);
@@ -141,6 +146,16 @@ export const removeReaction = async (req: Request, res: Response) => {
 
         if(!thought){
             return res.status(404).json({message: 'Unable to delete reaction, No thought with this id!'});
+        }
+
+        const user = await User.findOneAndUpdate(
+            {thoughts: req.params.thoughtId},
+            {$pull: {thoughts: req.params.thoughtId}},
+            {runValidators: true, new: true},
+        )
+
+        if(!user){
+            return res.status(404).json({message: 'Unable to find user attached to this thought!'});
         }
 
         res.json(thought);

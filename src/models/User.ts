@@ -69,7 +69,7 @@ userSchema
     .get(function(){
         return this.reactions.length;
     });
-    
+
 const User = model('user', userSchema)
 
 export default User;
