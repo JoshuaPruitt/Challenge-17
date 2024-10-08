@@ -5,9 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
 
-This app lets you view a list of github users.
-
-Use <a href=https://challenge-13-candidate-search.onrender.com/>this</a> link to go to the deployed site!
+This app runs off the mongoDB database. It acts as a kind of social media that you interact with using routes.
 
 ## Table of Contents
 
@@ -28,73 +26,244 @@ Use <a href=https://challenge-13-candidate-search.onrender.com/>this</a> link to
 This project requires node.js and its included node package manager.\
 You can go to <a href="https://nodejs.org/en/download/package-manager">this</a> website to download node.js and npm. Just follow node's included download instructions!
 
+MongoDB is also required to use this Project. You can follow <a href="https://www.mongodb.com/">this</a> to go to mongoDB's main site. Just follow their instructions on how to install mongoDB onto your system.
+
+You also will need an API debuging tool to interface with the database. My tool of choice is insomnia, which can be installed <a href="https://insomnia.rest/">here</a>. Follow their guide to install insomnia onto your system.
+
 ## Installation
 
-Once the files are downloaded onto your machine open the project folder and run the terminal in the /develop directory.\
+Once the files are downloaded onto your machine open the project folder and run the terminal in the root directory.
 To install the necessary dependencies run the "npm i" command to install the required files.
 
-Next go to the .env.EXAMPLE file within the develop/enviroment directiory and add a gitHub Fine-grained personal access token. Once thats been added, rename the file to just ".env". Finally, run "npm run dev" to run the Canidate Search site.
+To start the application just use "npm run start" to run the server. A list of commands is provided in the "package.json" file for additional commands.
 
 ## Usage
 
-Once started you'll be greeted by the Candidate Search Homepage. If your github token is present you will be greeted by a list of users. Each user card Has a profile picture, a username, and a Accept and Decline button. If a user has given a bio, name, email, location, and company, the corresponding information will also be displayed. Clicking on a users Accept button will send that users information to your local storage and remove that users information from the page. Declining a user will remove their information from the page.
+Once the server has been started and insomnia is up and running you can start making requests to the server. Once the server is started you will be provided with a link you can use to interface with the server, it should look something like this "http://localhost:3001".
 
-All accepted users can be viewed on the Saved Candidates page (which can be accessed by clicking the Saved Candidates link at the top of the page). You can view each accepted users provided information. If a user provided no information for a specific tab, the tab will have a message letting the user know that no information was provided. Each accepted user can be declined with the decline button at the end of a users card. Declining a user will remove them from the page and remove their information from local storage.
+This is a list of the requests you can make to the server. The type of request is listed at the top. The route is listed below that. Below the route an explanation is provided if needed. And any json data needed is listed below that. Remember a valid url should look something like this "http://localhost:3001/api/users". Just switch out the route after the port to access different routes.
 
-On the main page there is also a "Clear Local Storage" button located at the bottom of the page. This is for clearing all candidates saved within local storage quickly. This button was mainly used for development purposes but was left in for users to clear storage quickly.
+### Users
+
+#### Get (Gets all users)
+
+/api/users
+
+<p>Will get all users.</p>
+
+#### Post (Creates a new user)
+
+/api/users
+
+This is the json needed to create a user. Just fill it out with the username and email you wish you use. The email must be a valid email.
+
+```
+{
+    "username": "demo",
+    "email": "email@email.net"
+}
+```
+
+#### Get (Get single user)
+
+/api/user/{userId}
+
+Just put in the id of the user after the user/. Will return the asked for user.
+
+#### Put (Update user)
+
+/api/user/{userId}
+
+Just put in the id of the user after the user/. Fill out this json as needed to update the users information.
+
+```
+{
+    "username": "demo",
+    "email": "email@email.net"
+}
+```
+
+#### Delete (Delete a user)
+
+/api/user/{userId}
+
+Just put in the id of the user after the user/. This will delete the selected user.
+
+### Friends
+
+#### Post (add friends)
+
+api/users/{userId}/friends
+
+Just put in the id of the user after the user/. Add /friends to the end to access the friends route. This is the json needed to add a friend. You can add one or as many friends as you want at a time. Just add the users id to the friends array. If you want to add just one friend only keep one id in the array. Adding more friends is as easy as just adding one more users id seperated by a comma.
+
+```
+{
+    "friends": [
+        "{friendId}",
+        "{friendId2}"
+    ]
+}
+```
+
+#### Delete (delete a friend)
+
+api/users/{userId}/friends/{friendsId}
+
+Just put in the id of the user after the user/. Add your already added friends id after the friends/. You cannot un-add friends who have not been added as a friend.
+
+### Thoughts
+
+Thoughts act like the posts of this social media database.
+
+#### Get (get thoughts)
+
+/api/thoughts
+
+Will get all created thoughts from the database.
+
+#### Post (Create a thought)
+
+/api/thought
+
+This will create a new thought. Just fill out and attach the json below to create a new thought. The username you attach to the json will add the thought id to the user.
+
+```
+{
+    "thoughtText": "Placeholder Placeholder Placeholder",
+    "username": "demo"
+}
+```
+
+#### Get (Get single thought)
+
+/api/thought/{thoughtId}
+
+This will retrieve a single thought based on the thought id you put in. You cannot use a user id to retrieve a thought. Using this route it has to be a thought id which is added to every created thought.
+
+#### Put (Update thoght)
+
+/api/thought/{thoughtId}
+
+Using a thought id you can update a thoughts information. You can use the json below as a template to use as how to format your data. It is the same as the data used to create a thought.
+
+```
+{
+    "thoughtText": "Placeholder Placeholder Placeholder",
+    "username": "demo"
+}
+```
+
+#### Delete (Delete a thought)
+
+/api/thought/{thoughtId}
+
+Using a thought id you can delete a created thoght.
+
+### Reactions
+
+Reactions essentially act like the comments in this social media database.
+
+#### Post (Create Reaction)
+
+/api/thought/{thoughtId}/reactions
+
+To create a new reaction use the provided route. Use the thought id of the thought you wish to add a reaction to. Use the json below to interface with the server and create a new reaction. Provide a comment in the reactionBody and put the username of the user you wish to send this reaction through in username.
+
+```
+{
+    "reactionBody": "Placehoder Placeholder Placeholder",
+    "username": "demo"
+}
+```
+
+#### Delete (Delete Reaction)
+
+/api/thought/{thoughtId}/reactions/:reactionId
+
+To delete a created reaction just use the route above. Provide a thought id to the post you put the reaction under. Then provide a reaction id after the reactions/ to delete the reaction you created.
 
 ## Code Snippet
 
-This code runs on page startup. It is what fills the page with user information. Because the github api does not give all information when asking for a list of users a seperate Api call has to be made by using a users Username to recieve additional information like bio, email, company, location, ect.
+This is the function used to add friends. To add a new friend we first update the user to have the newly added friends. This is as easy as finding the user by the provided id and then setting the friends field within user to have the newly added friend data within the provided json.
+
+Now that the user has the friends added we now have to update the friends to have the user added as well. We use a for loop to iterate over the array within the json file. For each index we then set that indexed user to have the user id placed within the friends array. We then check to see that everything when setting the friends went okay. If it went okay we continue to the next index if there is one.
+
+Once everything is over we tell the user that the friends have been successfully added and return.
 
 ```
-useEffect(() => {
-    //first search through the github data. This returns back an array of users with incomplete information
-    searchGithub().then( async (userData) => {
+export const addFriend = async(req: Request, res: Response) => {
+    try {
+        //update user
+        const user = await User.findOneAndUpdate(
+            {_id: req.params.userId},
+            {$set: {friends: req.body.friends}},
+            {runValidators: true, new: true},
+        )
 
-      //Map out the data from the github search so that each user can have informaition added to them
-      const detailedUserPromises = userData.map((user: Candidate) =>
-        //use the login provided by each user to grab additional information
-        searchGithubUser(user.login).then((userDetails) => ({
-          //spread out the original user data, then spread out the new user data
-          ...user,
-          ...userDetails
-        }))
-      );
+        if(!user){
+            return res.status(404).json({message: 'No user with that id found!'});
+        }
 
-      //Promise all takes all the individual promises from detailedUserPromises and removes all promise information. Returning back just the objects
-      const detailedUsers = await Promise.all(detailedUserPromises);
-      //We then send the parsed information to the updateUser function to have the page be updated
-      updateUser(detailedUsers);
-    });
-  }, []);
+        // update added friend or friends
+        for(let i=0; i < req.body.friends.length; i++){
+            console.log(`Friend: ${req.body.friends[i]}`)
+            const friend = await User.findOneAndUpdate(
+                {_id: req.body.friends[i]},
+                {$set: {friends: req.params.userId}},
+                {runValidators: true, new: true},
+            )
+
+            if(!friend){
+                return res.status(404).json({message: 'No user with that username exists!'});
+            }
+        }
+
+        res.json({message: 'Friend Successfully added!'});
+        return
+    } catch(err: any){
+        res.status(500).json(err);
+        return;
+    }
+}
+
 ```
 
 ## Screenshots
 
-This is what the Candidate Search home page looks like.
+#### This is us grabbing the user data using the get users route in insomnia.
 
-<img src='./Assets/candidateSearch.png' width='680' height='500'>
+<img src='./Assets/challenge17Users.png' width='980' height='460'>
 
-This is what the Potential Candidate page looks like. Accepted Users data is stored here.
+#### This is us adding a new friend using the friend route.
 
-<img src='./Assets/potentialCandidates.png' width='680' height='500'>
+<img src='./Assets/challenge17Friends.png' width='980' height='460'>
+
+#### This is us creating a new thought using the post thoughts route.
+
+<img src='./Assets/challenge17Thoughts.png' width='980' height='460'>
+
+#### This is us creating a new reaction using the post reaction route.
+
+<img src='./Assets/challenge17Reactions.png' width='980' height='460'>
 
 ## Features
 
 Features include:
 
-- The ability to view multiple users
-- A accept and decline button for adding and removing users
-- A Saved Candidiates page for viewing all accepted users
-- A clear storage button for removing all saved data quickly
+- View, Create, update, and delete users.
+- View individual users.
+- Add and remove friends on users.
+- View, Create, update, and delete Thoughts.
+- View individual Thoughts.
+- Add and remove reactions to thoughts.
 
 ## Future Features
 
 Features that may be implemented in the future include:
 
-- Filters for only seeing users with complete information
-- A clearer style for User Experience improvement
+- A front end to make interfacing with the server more user friendly and easy to access.
+- Sign in and local storage functionality.
 
 ## License
 
@@ -103,10 +272,11 @@ Licensed under the MIT license.
 ## Technologies Used
 
 <ul>
+<li>The mongoose docs <a href='https://mongoosejs.com/docs/'>here</a> (general mongoose help)</li>
+<li>Stack Overflow (For specific mongoose issues and ideas)</li>
 <li>Node.js (for installing packages as well as building and running code).</li>
-<li>Vite (for running a local server, and development).</li>
 <li>Visual Studio Code (for writing code).</li>
-<li>Mozila Web Docs and W3 Schools (for getting help with JavaScript).</li>
+<li>Mozila Web Docs and W3 Schools (for getting help with TypeScript).</li>
 </ul>
 
 ## Credits
@@ -114,7 +284,7 @@ Licensed under the MIT license.
 <ul>
 <li>Joshua Pruitt (me)</li>
 <li>Coding bootcamp staff (for their help with Coding)</li>
-<ul>
+</ul>
 
 ## Contact Me
 
