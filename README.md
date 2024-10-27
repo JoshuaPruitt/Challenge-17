@@ -7,6 +7,8 @@
 
 This app runs off the mongoDB database. It acts as a kind of social media that you interact with using routes.
 
+Click <a href="https://drive.google.com/file/d/1hZ0U-JHFA99XTYIQLSRVgRjG6y3w5VWa/view?usp=sharing">here</a> to take you to a demonstration video of how to use the routes!
+
 ## Table of Contents
 
 - [Required-Technologies](#required-technologies)
